@@ -4,6 +4,7 @@
 import streamlit as st
 from streamlit_drawable_canvas import st_canvas
 
+
 # data
 import numpy as np
 import pandas as pd
@@ -20,8 +21,6 @@ import cv2
 # LAYOUT --------
 st.set_page_config(layout="wide")
 col1, col2 = st.columns((1,2))
-
-
 
 # MODEL -------
 
@@ -41,20 +40,36 @@ def adjust_img(img):
 
 
 
+def local_css(file_name):
+    with open(file_name) as f:
+        st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+
+def remote_css(url):
+    st.markdown(f'<link href="{url}" rel="stylesheet">', unsafe_allow_html=True)
+
+def icon(icon_name):
+    st.markdown(f'<i class="material-icons">{icon_name}</i>', unsafe_allow_html=True)
+
+local_css("static/css/style.css")
+remote_css('https://fonts.googleapis.com/icon?family=Material+Icons')
+
+
+
+
+
+
 # UI --------
 
-st.write("""
-    # Letter Guesser
-    Simple letter guessing interface with *keras* and *streamlit.io*
-""")
-
-
 with col1:
-    canvas_result = st_canvas(width=250,height=250)
+    st.write("""
+        ## Letter Guesser
+        """)
+    canvas_result = st_canvas(stroke_width=25,width=250,height=250)
 
-if canvas_result.image_data is not None:
-    img = adjust_img(canvas_result.image_data)
-    pred = model.predict(img)
-    res = pd.DataFrame({'pred': pred.reshape(-1), 'letter' : alphabet})
-    fig = px.bar(res,x='letter',y='pred')
-    with col2: st.plotly_chart(fig)
+with col2:
+    if canvas_result.image_data is not None:
+        img = adjust_img(canvas_result.image_data)
+        pred = model.predict(img)
+        res = pd.DataFrame({'pred': pred.reshape(-1), 'letter' : alphabet})
+        fig = px.bar(res,x='letter',y='pred')
+        st.plotly_chart(fig)
