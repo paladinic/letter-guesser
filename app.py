@@ -70,6 +70,9 @@ with col2:
     if canvas_result.image_data is not None:
         img = adjust_img(canvas_result.image_data)
         pred = model.predict(img)
+
         res = pd.DataFrame({'pred': pred.reshape(-1), 'letter' : alphabet})
-        fig = px.bar(res,x='letter',y='pred')
+        res['max'] = res.pred == max(res.pred)
+        fig = px.bar(res,x='letter',y='pred',color='max')
+        fig.update_layout(xaxis={'categoryorder':'category ascending'})
         st.plotly_chart(fig)
