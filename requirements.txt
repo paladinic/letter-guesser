@@ -4,5 +4,5 @@ streamlit-drawable-canvas==0.8.0
 pandas==1.2.3
 numpy==1.18.5
 Keras==2.4.3
-opencv-python==4.4.0.42
+opencv-python-headless
 plotly==4.9.0
