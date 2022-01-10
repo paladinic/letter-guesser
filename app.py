@@ -26,6 +26,7 @@ col1, col2 = st.columns((1,2))
 
 # upload model
 model = load_model('static/models/letters_model.h5py')
+model = load_model('static/models/model.h5')
 
 # udf's
 alphabet = np.char.upper(np.array(["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"]))
