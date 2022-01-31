@@ -25,55 +25,50 @@ col1, col2 = st.columns((1,2))
 # MODEL -------
 
 # upload model
-model = load_model('static/models/letters_model.h5py')
-model = load_model('static/models/model.h5')
+nn_model = load_model('static/models/letters_model.h5py')
+cnn_model = load_model('static/models/conv_model.h5')
 
 # udf's
 alphabet = np.char.upper(np.array(["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"]))
 def alph_res(pred):
     return alphabet[pred == max(pred)][0]
 
-def adjust_img(img):
+def adjust_img_2d(img):
+    resizedImage = cv2.resize(img.astype('float32'), (28,28))[:,:,3]
+    rescaledImage = resizedImage*(16/255)
+    reshapedImage = rescaledImage.reshape(-1, 28,28, 1)
+    return reshapedImage
+
+def adjust_img_1d(img):
     resizedImage = cv2.resize(img.astype('float32'), (28,28))[:,:,3]
     rescaledImage = resizedImage*(16/255)
     reshapedImage = rescaledImage.reshape(1,784)
     return reshapedImage
 
-
-
-def local_css(file_name):
-    with open(file_name) as f:
-        st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
-
-def remote_css(url):
-    st.markdown(f'<link href="{url}" rel="stylesheet">', unsafe_allow_html=True)
-
-def icon(icon_name):
-    st.markdown(f'<i class="material-icons">{icon_name}</i>', unsafe_allow_html=True)
-
-local_css("static/css/style.css")
-remote_css('https://fonts.googleapis.com/icon?family=Material+Icons')
-
-
-
-
-
-
 # UI --------
 
 with col1:
     st.write("""
-        ## Letter Guesser
+        # Letter Guesser
+        [*Claudio Paladini*](www.paladinic.com)
         """)
-    canvas_result = st_canvas(stroke_width=25,width=250,height=250)
+    canvas_result = st_canvas(stroke_width=35,width=250,height=250)
 
 with col2:
     if canvas_result.image_data is not None:
-        img = adjust_img(canvas_result.image_data)
-        pred = model.predict(img)
 
-        res = pd.DataFrame({'pred': pred.reshape(-1), 'letter' : alphabet})
-        res['max'] = res.pred == max(res.pred)
-        fig = px.bar(res,x='letter',y='pred',color='max')
+        img1d = adjust_img_1d(canvas_result.image_data)
+        pred_nn = nn_model.predict(img1d)
+        res_nn = pd.DataFrame({'Prediction': pred_nn.reshape(-1), 'letter' : alphabet})
+        res_nn['Max'] = res_nn.Prediction == max(res_nn.Prediction)
+        fig = px.bar(res_nn,x='letter',y='Prediction',color='Max')
+
+
+        # img2d = adjust_img_2d(canvas_result.image_data)
+        # pred_cnn = cnn_model.predict(img2d)
+        # res_cnn = pd.DataFrame({'Prediction': pred_cnn.reshape(-1), 'letter' : alphabet})
+        # res_cnn['Max'] = res_cnn.Prediction == max(res_cnn.Prediction)
+        # fig = px.bar(res_cnn,x='letter',y='Prediction',color='Max')
+
         fig.update_layout(xaxis={'categoryorder':'category ascending'})
         st.plotly_chart(fig)
