@@ -52,23 +52,23 @@ with col1:
         # Letter Guesser
         [*Claudio Paladini*](www.paladinic.com)
         """)
-    canvas_result = st_canvas(stroke_width=35,width=250,height=250)
+    canvas_result = st_canvas(stroke_width=30,width=250,height=250)
 
 with col2:
     if canvas_result.image_data is not None:
 
-        img1d = adjust_img_1d(canvas_result.image_data)
-        pred_nn = nn_model.predict(img1d)
-        res_nn = pd.DataFrame({'Prediction': pred_nn.reshape(-1), 'letter' : alphabet})
-        res_nn['Max'] = res_nn.Prediction == max(res_nn.Prediction)
-        fig = px.bar(res_nn,x='letter',y='Prediction',color='Max')
+        # img1d = adjust_img_1d(canvas_result.image_data)
+        # pred_nn = nn_model.predict(img1d)
+        # res_nn = pd.DataFrame({'Prediction': pred_nn.reshape(-1), 'letter' : alphabet})
+        # res_nn['Max'] = res_nn.Prediction == max(res_nn.Prediction)
+        # fig = px.bar(res_nn,x='letter',y='Prediction',color='Max')
 
 
-        # img2d = adjust_img_2d(canvas_result.image_data)
-        # pred_cnn = cnn_model.predict(img2d)
-        # res_cnn = pd.DataFrame({'Prediction': pred_cnn.reshape(-1), 'letter' : alphabet})
-        # res_cnn['Max'] = res_cnn.Prediction == max(res_cnn.Prediction)
-        # fig = px.bar(res_cnn,x='letter',y='Prediction',color='Max')
+        img2d = adjust_img_2d(canvas_result.image_data)
+        pred_cnn = cnn_model.predict(img2d)
+        res_cnn = pd.DataFrame({'Prediction': pred_cnn.reshape(-1), 'letter' : alphabet})
+        res_cnn['Max'] = res_cnn.Prediction == max(res_cnn.Prediction)
+        fig = px.bar(res_cnn,x='letter',y='Prediction',color='Max')
 
         fig.update_layout(xaxis={'categoryorder':'category ascending'})
         st.plotly_chart(fig)
